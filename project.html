@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>My Profile</h1>
+
+        <input type="text" id="username" placeholder="Enter your name">
+
+        <button onclick="saveName()">Save Name</button>
+
+        <button onclick="showName()">Show Name</button>
+
+        <button onclick="removeItem()">Delete Name</button>
+
+        <button onclick="getLocation()">get my location</button>
+
+        <p id="answer">My location will appear here</p>
+
+        <p id="result">Your name will appear here.</p>
+
+        <div>
+            <button><a href="page1.html">Next</a></button>
+        </div>
+
+    </div>
+
+    <script>
+        function saveName() {
+            const name = document.getElementById("username").value;
+            localStorage.setItem("username", name);
+            alert("Name saved successfully");
+        }
+
+        function showName() {
+            const name = localStorage.getItem("username");
+
+            document.getElementById("result").textContent =
+                name ? "Welcome, " + name : "No name saved.";
+                document.getElementById("result").style.color = "magenta"
+        }
+
+        function removeItem() {
+            localStorage.removeItem("username");
+
+            document.getElementById("result").textContent =
+                "Name deleted successfully.";
+                
+            document.getElementById("result").style.color = "red";
+        }
+
+        function nextPage() {
+            window.location.href = "home.html";
+        }
+
+        function getLocation(){
+            if(!navigator.geolocation) {
+                document.getElementById("answer").textContent = "geolocation not supported";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const latitude =
+                        position.coords.latitude;
+
+                    const longitude =
+                        position.coords.longitude;
+
+                        document.getElementById("answer").textContent = 
+                        `Latitude: ${latitude}, Longitude: ${longitude}`;
+                },
+                function() {
+                    document.getElementById("answer").textContent = 
+                    "unable to retrive your location"
+                }
+            );
+        }
+
+        let camera = document.getElementById("camera");
+
+function startCamera() {
+
+    navigator.mediaDevices.getUserMedia({
+        video: true
+    }).then(function(stream) {
+
+        camera.srcObject = stream;
+
+    });
+
+}
+
+function takePicture() {
+
+    const canvas = document.getElementById("canvas");
+
+    const context = canvas.getContext("2d");
+
+    context.drawImage(camera, 0, 0, 250, 200);
+
+    const picture = canvas.toDataURL("image/png");
+
+    localStorage.setItem("profilePicture", picture);
+
+    document.getElementById("profilePic").src = picture;
+
+    camera.srcObject.getTracks().forEach(track => track.stop());
+
+}
+
+function deletePicture() {
+
+    localStorage.removeItem("profilePicture");
+
+    document.getElementById("profilePic").src = "";
+
+}
+
+window.onload = function() {
+
+    const savedPicture = localStorage.getItem("profilePicture");
+
+    document.getElementById("profilePic").src = savedPicture || "";
+
+};
+
+
+    </script>
+
+
+</body>
+</html>
